@@ -3,11 +3,11 @@ from datetime import datetime
 
 # Burada linkləri əlavə edirsən
 links = [
-    {"name": "sports-trgolas-b1", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayin1.m3u8"}
-    {"name": "sports-trgolas-b2", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinb2.m3u8"}
-    {"name": "sports-trgolas-b3", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinb3.m3u8"}
-    {"name": "sports-trgolas-b4", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinb4.m3u8"}
-    {"name": "sports-trgolas-b5", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinb5.m3u8"}
+    {"name": "sports-trgolas-b1", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayin1.m3u8"},
+    {"name": "sports-trgolas-b2", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinb2.m3u8"},
+    {"name": "sports-trgolas-b3", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinb3.m3u8"},
+    {"name": "sports-trgolas-b4", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinb4.m3u8"},
+    {"name": "sports-trgolas-b5", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinb5.m3u8"},
     {"name": "sports-trgolas-ss1", "url": "http://example.com/stream2.m3u8"}
     {"name": "sports-trgolas-ss2", "url": "http://example.com/stream2.m3u8"}
     {"name": "sports-trgolas-sm1", "url": "http://example.com/stream2.m3u8"}
