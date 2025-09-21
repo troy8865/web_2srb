@@ -31,7 +31,7 @@ def create_m3u_files(channels):
     # Yeni faylları yarat
     for channel in channels:
         safe_name = sanitize_filename(channel["name"])
-        filename = os.path.join(OUTPUT_DIR, f"{safe_name}.m3u")
+        filename = os.path.join(OUTPUT_DIR, f"{safe_name}.m3u8")
         content = f"""#EXTM3U
 #EXT-X-VERSION:3
 #EXT-X-STREAM-INF:BANDWIDTH=5500000,AVERAGE-BANDWIDTH=8976000,RESOLUTION=1920x1080,CODECS="avc1.640028,mp4a.40.2",FRAME-RATE=25,SUBTITLES="subs"
