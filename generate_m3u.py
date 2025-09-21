@@ -1,7 +1,6 @@
 import os
 from datetime import datetime
 
-# Burada linkləri əlavə edirsən
 links = [
     {"name": "sports-trgolas-b1", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayin1.m3u8"},
     {"name": "sports-trgolas-b2", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinb2.m3u8"},
@@ -15,7 +14,11 @@ links = [
     {"name": "sports-trgolas-ts", "url": "http://example.com/stream2.m3u8"},
 ]
 
-OUTPUT_DIR = "m3u_files"  # Fayllar bu qovluqda saxlanacaq
+OUTPUT_DIR = "m3u_files"
+
+def sanitize_filename(name):
+    """Fayl adlarında problem yarada biləcək simvolları çıxarır"""
+    return "".join(c for c in name if c.isalnum() or c in "-_")
 
 def create_m3u_files(channels):
     os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -26,8 +29,9 @@ def create_m3u_files(channels):
             os.remove(os.path.join(OUTPUT_DIR, file))
 
     # Yeni faylları yarat
-    for i, channel in enumerate(channels, start=1):
-        filename = os.path.join(OUTPUT_DIR, f"kanal_{i}.m3u")
+    for channel in channels:
+        safe_name = sanitize_filename(channel["name"])
+        filename = os.path.join(OUTPUT_DIR, f"{safe_name}.m3u")
         content = f"""#EXTM3U
 #EXT-X-VERSION:3
 #EXT-X-STREAM-INF:BANDWIDTH=5500000,AVERAGE-BANDWIDTH=8976000,RESOLUTION=1920x1080,CODECS="avc1.640028,mp4a.40.2",FRAME-RATE=25,SUBTITLES="subs"
