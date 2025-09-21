@@ -2,7 +2,7 @@ name: Update M3U Files
 
 on:
   schedule:
-    - cron: "*/10 * * * *"   # Hər 10 dəqiqədən bir
+    - cron: "*/380 * * * *"   # Hər 10 dəqiqədən bir
   workflow_dispatch:          # Manual trigger
 
 jobs:
