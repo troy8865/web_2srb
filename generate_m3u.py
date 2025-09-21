@@ -25,7 +25,7 @@ def create_m3u_files(channels):
 
     # Köhnə faylları sil
     for file in os.listdir(OUTPUT_DIR):
-        if file.endswith(".m3u8"):
+        if file.endswith(".m3u"):
             os.remove(os.path.join(OUTPUT_DIR, file))
 
     # Yeni faylları yarat
