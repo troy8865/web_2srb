@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Kodları çek
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Python kur
         uses: actions/setup-python@v4
@@ -33,15 +33,11 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
+          # 👇 SON DEĞİŞİKLİKLERİ AL — ÇAKIŞMAYI ENGELLE
           git pull origin ${GITHUB_REF#refs/heads/} --rebase
 
-          # 👇 Git'ten eski dosyaları kaldır — hata yoksa kaldırır, hata varsa sessizce geç
-          git rm -rf channels_files/ 2>/dev/null || echo "🗑️  channels_files/ Git'te zaten silinmiş."
-
-          # Yeni dosyaları ekle
           git add -A
-          echo "📥 Git'e eklenen dosyalar:"
-          git status --porcelain
+          git status --porcelain  # Opsiyonel: değişiklikleri göster
 
           git commit -m "Update channel playlists [skip ci]" || echo "No changes to commit"
           git push origin HEAD:${GITHUB_REF#refs/heads/}
