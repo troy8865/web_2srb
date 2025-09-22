@@ -3,10 +3,13 @@ import re
 import os
 import shutil
 
+print("🚀 goals.py çalışmaya başladı...")
+
 # Trgoals domain kontrol
 base = "https://trgoals"
 domain = ""
 
+print("🔍 Uygun domain aranıyor...")
 for i in range(1393, 2101):
     test_domain = f"{base}{i}.xyz"
     try:
@@ -15,12 +18,12 @@ for i in range(1393, 2101):
             domain = test_domain
             print(f"✅ Çalışır domain bulundu: {domain}")
             break
-    except:
-        continue
+    except Exception as e:
+        continue  # sessizce geç
 
 if not domain:
-    print("❌ Çalışır bir domain bulunamadı.")
-    exit()
+    print("❌ UYARI: Hiçbir domain çalışmıyor — script sonlanıyor.")
+    exit(1)  # 👈 CRON'DA BU exit() YÜZÜNDEN ÇIKIYOR OLABİLİR
 
 # Kanallar ve isimleri
 channel_ids = {
@@ -58,22 +61,23 @@ channel_ids = {
     "yayinex8": "Tâbii 8"
 }
 
-# ========== KLÖRÜ TAMAMEN TEMİZLEME (GÜÇLÜ VERSİYON) ==========
+# ========== KLÖRÜ TAMAMEN TEMİZLEME ==========
 folder_name = "channels_files"
+
+print(f"🧹 {folder_name} klasörü temizleniyor...")
 
 if os.path.exists(folder_name):
     try:
         shutil.rmtree(folder_name)
-        print(f"🗑️  {folder_name} klasörü başarıyla silindi.")
+        print(f"🗑️  {folder_name} fiziksel olarak silindi.")
     except Exception as e:
-        print(f"⚠️  Silme hatası: {e} — Tek tek dosyalar siliniyor...")
-        # Tek tek dosyaları sil
+        print(f"⚠️  Silme hatası: {e} — Tek tek siliniyor...")
         for root, dirs, files in os.walk(folder_name, topdown=False):
             for file in files:
                 try:
                     os.remove(os.path.join(root, file))
-                except Exception as ex:
-                    print(f"❌ Dosya silinemedi: {file} - {ex}")
+                except:
+                    pass
             for dir in dirs:
                 try:
                     os.rmdir(os.path.join(root, dir))
@@ -83,12 +87,12 @@ if os.path.exists(folder_name):
             os.rmdir(folder_name)
             print(f"🗑️  {folder_name} elle silindi.")
         except:
-            print(f"❌ {folder_name} hâlâ silinemedi — devam ediliyor...")
+            print(f"❌ {folder_name} silinemedi — devam ediliyor.")
 
 # Klasörü yeniden oluştur
 try:
     os.makedirs(folder_name, exist_ok=False)
-    print(f"📁 {folder_name} klasörü yeniden oluşturuldu.")
+    print(f"📁 {folder_name} yeniden oluşturuldu.")
 except FileExistsError:
     print(f"⚠️  {folder_name} hâlâ var — zorla siliniyor...")
     shutil.rmtree(folder_name)
@@ -99,6 +103,9 @@ except Exception as e:
     exit(1)
 
 # ========== KANAL DOSYALARI OLUŞTURMA ==========
+print(f"📺 {len(channel_ids)} kanal işleniyor...")
+
+created_count = 0
 for channel_id, channel_name in channel_ids.items():
     channel_url = f"{domain}/channel.html?id={channel_id}"
     try:
@@ -120,8 +127,12 @@ for channel_id, channel_name in channel_ids.items():
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(m3u_content)
 
-            print(f"📺 {channel_name} → {file_path} olarak kaydedildi.")
+            print(f"✅ {channel_name} → {safe_filename}.m3u8 yazıldı.")
+            created_count += 1
         else:
             print(f"❌ {channel_name} için baseurl bulunamadı.")
     except Exception as e:
         print(f"⚠️ {channel_name} işlenirken hata: {e}")
+
+print(f"🎉 Toplam {created_count} dosya oluşturuldu.")
+print("✅ goals.py başarıyla tamamlandı.")
