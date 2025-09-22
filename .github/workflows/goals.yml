@@ -2,7 +2,7 @@ name: cixis fayli Links
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Hər 5 dəqiqədən bir (istəsən 180 da qoya bilərsən)
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # 👈 v4 daha yaxşıdır
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -20,31 +20,19 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install requests  # 👈 requirements.txt yoxdursa, sadəcə requests
+          pip install requests
 
-      - name: Run extract.py (goals.py)
-        run: python goals.py  # 👈 sən goals.py istifadə edirsən
+      - name: Run goals.py
+        run: python goals.py
 
-      - name: Commit and Push if Changed
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 👈 bu daha etibarlıdır
+      - name: Commit and Push changes
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-
-          # 👇 Əvvəlki məlumatları Gitdən sil — hata versə də davam et
-          git rm -rf channels_files/ 2>/dev/null || echo "🗑️ channels_files/ Gitdə tapılmadı — davam edilir..."
-
-          # 👇 Yeni dosyaları əlavə et
-          git add -A
-
-          # 👇 Dəyişiklik varsa commit et, yoxsa keç
-          if git diff --cached --quiet; then
-            echo "✅ Heç bir dəyişiklik yoxdur — push edilmir."
+          git add .
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
           else
-            git commit -m "🔁 Updated m3u8 files"
-            git pull --rebase origin main || echo "🔄 Pull uğursuz — push davam edir..."
-            git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git HEAD:main
-            echo "✅ Yeniləmə uğurla push edildi!"
+            git commit -m "Auto-update m3u8 files"
+            git push
           fi
