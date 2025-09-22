@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Kodları çek
-        uses: actions/checkout@v4  # 👈 v4 kullan
+        uses: actions/checkout@v4
 
       - name: Python kur
         uses: actions/setup-python@v4
@@ -35,13 +35,10 @@ jobs:
           
           git pull origin ${GITHUB_REF#refs/heads/} --rebase
 
-          # 👇 ESKİ DOSYALARI GİT'TEN TAMAMEN KALDIR
-          if [ -d "channels_files" ]; then
-            git rm -rf channels_files/
-            echo "🗑️  Git'ten channels_files/ klasörü kaldırıldı."
-          fi
+          # 👇 Git'ten eski dosyaları kaldır — hata yoksa kaldırır, hata varsa sessizce geç
+          git rm -rf channels_files/ 2>/dev/null || echo "🗑️  channels_files/ Git'te zaten silinmiş."
 
-          # YENİ DOSYALARI EKLE
+          # Yeni dosyaları ekle
           git add -A
           echo "📥 Git'e eklenen dosyalar:"
           git status --porcelain
