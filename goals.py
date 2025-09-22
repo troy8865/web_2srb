@@ -6,7 +6,7 @@ import os
 base = "https://trgoals"
 domain = ""
 
-for i in range(1393, 2101, 1407):
+for i in range(1393, 2101):
     test_domain = f"{base}{i}.xyz"
     try:
         response = requests.head(test_domain, timeout=3)
@@ -57,10 +57,15 @@ channel_ids = {
     "yayinex8": "Tâbii 8"
 }
 
-# Klasör oluştur
+# Klasörü temizle veya oluştur
 folder_name = "channels_files"
-if not os.path.exists(folder_name):
+if os.path.exists(folder_name):
+    for file in os.listdir(folder_name):
+        os.remove(os.path.join(folder_name, file))
+    print(f"🗑️  {folder_name} klasörü temizlendi.")
+else:
     os.makedirs(folder_name)
+    print(f"📁 {folder_name} klasörü oluşturuldu.")
 
 # Her kanal için ayrı .m3u8 dosyası oluştur
 for channel_id, channel_name in channel_ids.items():
@@ -72,14 +77,14 @@ for channel_id, channel_name in channel_ids.items():
             baseurl = match.group(1)
             full_url = f"http://proxylendim101010.mywire.org/proxy.php?url={baseurl}{channel_id}.m3u8"
 
-            # HLS Master Playlist formatı (multi-variant stream uyumlu)
+            # HLS Master Playlist formatı
             m3u_content = f"""#EXTM3U
 #EXT-X-VERSION:3
 #EXT-X-STREAM-INF:BANDWIDTH=5500000,AVERAGE-BANDWIDTH=8976000,RESOLUTION=1920x1080,CODECS="avc1.640028,mp4a.40.2",FRAME-RATE=25
 {full_url}
 """
 
-            # Dosya adını güvenli hale getir (emoji ve özel karakterlerden arındır)
+            # Dosya adını güvenli hale getir
             safe_filename = "".join(c if c.isalnum() or c in " ._-" else "_" for c in channel_name)
             file_path = os.path.join(folder_name, f"{safe_filename}.m3u8")
 
