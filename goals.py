@@ -61,16 +61,19 @@ channel_ids = {
     "yayinex8": "Tâbii 8"
 }
 
-# ========== KLÖRÜ TAMAMEN TEMİZLEME + YENİDEN OLUŞTURMA ==========
+# ========== KLÖRÜ TEMİZLEME + YENİDEN OLUŞTURMA ==========
 folder_name = "channels_files"
 
-print(f"🧹 {folder_name} silinir...")
+# Klasörü temizleme (varsa içeriğini sil, yoksa oluştur)
+print(f"🧹 {folder_name} temizlenir...")
 if os.path.exists(folder_name):
     try:
+        # Klasörü tamamen sil
         shutil.rmtree(folder_name)
         print(f"🗑️  {folder_name} fiziki olaraq silindi.")
     except Exception as e:
         print(f"⚠️  Silinə bilmədi: {e} — tək-tək silinir...")
+        # Silinemeyen dosyaları tek tek sil
         for root, dirs, files in os.walk(folder_name, topdown=False):
             for f in files:
                 try:
@@ -87,53 +90,50 @@ if os.path.exists(folder_name):
         except:
             pass
 
-# 👇 HƏR HALDA KLÖR YARADILIR — HEÇ VAXT ATLANMIR!
+# Klasörü yeniden oluştur (her durumda)
 try:
-    os.makedirs(folder_name, exist_ok=True)  # exist_ok=True — əgər varsa xəta vermir
+    os.makedirs(folder_name, exist_ok=True)
     print(f"📁 {folder_name} uğurla yaradıldı (yenidən).")
 except Exception as e:
     print(f"❌ FATAL: {folder_name} yaradıla bilmədi: {e}")
-    sys.exit(1)  # Yalnız bu yerde çıx — çünki əsas infrastruktur qurula bilmədi
+    sys.exit(1)  # Klasör oluşturulamazsa çık
 
-# ========== KANALLAR İŞLƏNİR — DOMAIN YOXDURSA BELƏ BOŞ FAYL YARANMIR, AMMA KLÖR VAR ==========
+# ========== KANALLARI İŞLEME ==========
 if not domain:
     print("ℹ️  Domain olmadığı üçün fayl yaradılmayacaq — yalnız boş qovluq qalacaq.")
 else:
     print(f"📺 {len(channel_ids)} kanal işlənir...")
+    created = 0
+    for channel_id, channel_name in channel_ids.items():
+        try:
+            url = f"{domain}/channel.html?id={channel_id}"
+            r = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=5)
+            match = re.search(r'const baseurl = "(.*?)"', r.text)
+            if not match:
+                print(f"❌ {channel_name} üçün baseurl tapılmadı.")
+                continue
 
-created = 0
-for channel_id, channel_name in channel_ids.items():
-    if not domain:
-        break  # domain yoxdursa, fayl yaratma — yalnız qovluq qalsın
+            baseurl = match.group(1)
+            full_url = f"http://proxylendim101010.mywire.org/proxy.php?url={baseurl}{channel_id}.m3u8"
 
-    try:
-        url = f"{domain}/channel.html?id={channel_id}"
-        r = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=5)
-        match = re.search(r'const baseurl = "(.*?)"', r.text)
-        if not match:
-            print(f"❌ {channel_name} üçün baseurl tapılmadı.")
-            continue
-
-        baseurl = match.group(1)
-        full_url = f"http://proxylendim101010.mywire.org/proxy.php?url={baseurl}{channel_id}.m3u8"
-
-        content = f"""#EXTM3U
+            content = f"""#EXTM3U
 #EXT-X-VERSION:3
 #EXT-X-STREAM-INF:BANDWIDTH=5500000,AVERAGE-BANDWIDTH=8976000,RESOLUTION=1920x1080,CODECS="avc1.640028,mp4a.40.2",FRAME-RATE=25
 {full_url}
 """
 
-        safe_name = "".join(c if c.isalnum() or c in " ._-" else "_" for c in channel_name)
-        path = os.path.join(folder_name, f"{safe_name}.m3u8")
+            safe_name = "".join(c if c.isalnum() or c in " ._-" else "_" for c in channel_name)
+            path = os.path.join(folder_name, f"{safe_name}.m3u8")
 
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(content)
 
-        print(f"✅ {channel_name} → {safe_name}.m3u8")
-        created += 1
+            print(f"✅ {channel_name} → {safe_name}.m3u8")
+            created += 1
 
-    except Exception as e:
-        print(f"⚠️ {channel_name} emal olunarkən xəta: {e}")
+        except Exception as e:
+            print(f"⚠️ {channel_name} emal olunarkən xəta: {e}")
 
-print(f"✅ Ümumi {created} fayl yaradıldı.")
+    print(f"✅ Ümumi {created} fayl yaradıldı.")
+
 print("🏁 goals.py uğurla başa çatdı — hər zaman channels_files/ qovluğu mövcuddur!")
