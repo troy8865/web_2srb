@@ -6,7 +6,7 @@ import os
 base = "https://trgoals"
 domain = ""
 
-for i in range(1393, 2101):
+for i in range(1393, 2101, 1407):
     test_domain = f"{base}{i}.xyz"
     try:
         response = requests.head(test_domain, timeout=3)
