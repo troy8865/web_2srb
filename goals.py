@@ -1,6 +1,7 @@
 import requests
 import re
 import os
+import shutil  # 👈 Bunu ekledik
 
 # Trgoals domain kontrol
 base = "https://trgoals"
@@ -57,15 +58,14 @@ channel_ids = {
     "yayinex8": "Tâbii 8"
 }
 
-# Klasörü temizle veya oluştur
+# Klasörü tamamen sil ve yeniden oluştur
 folder_name = "channels_files"
 if os.path.exists(folder_name):
-    for file in os.listdir(folder_name):
-        os.remove(os.path.join(folder_name, file))
-    print(f"🗑️  {folder_name} klasörü temizlendi.")
-else:
-    os.makedirs(folder_name)
-    print(f"📁 {folder_name} klasörü oluşturuldu.")
+    shutil.rmtree(folder_name)  # 👈 TAMAMEN SİLER (dosyalar + alt klasörler)
+    print(f"🗑️  {folder_name} klasörü tamamen silindi.")
+
+os.makedirs(folder_name)  # 👈 HER ZAMAN YENİDEN OLUŞTUR
+print(f"📁 {folder_name} klasörü yeniden oluşturuldu.")
 
 # Her kanal için ayrı .m3u8 dosyası oluştur
 for channel_id, channel_name in channel_ids.items():
