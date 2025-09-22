@@ -1,71 +1,82 @@
+import requests
+import re
 import os
-from datetime import datetime
 
-links = [
-    {"name": "sports-trgolas-sms2", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinsms2.m3u8"},
-    {"name": "sports-trgolas-1", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayin1.m3u8"},
-    {"name": "sports-trgolas-as", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinas.m3u8"},
-    {"name": "sports-trgolas-atv", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinatv.m3u8"},
-    {"name": "sports-trgolas-b2", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinb2.m3u8"},
-    {"name": "sports-trgolas-b3", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinb3.m3u8"},
-    {"name": "sports-trgolas-b4", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinb4.m3u8"},
-    {"name": "sports-trgolas-b5", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinb5.m3u8"},
-    {"name": "sports-trgolas-bm1", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinbm1.m3u8"},
-    {"name": "sports-trgolas-bm2", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinbm2.m3u8"},
-    {"name": "sports-trgolas-eu1", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayineu1.m3u8"},
-    {"name": "sports-trgolas-eu2", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayineu2.m3u8"},
-    {"name": "sports-trgolas-ex1", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinex1.m3u8"},
-    {"name": "sports-trgolas-ex2", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinex2.m3u8"},
-    {"name": "sports-trgolas-ex3", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinex3.m3u8"},
-    {"name": "sports-trgolas-ex4", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinex4.m3u8"},
-    {"name": "sports-trgolas-ex5", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinex5.m3u8"},
-    {"name": "sports-trgolas-ex6", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinex6.m3u8"},
-    {"name": "sports-trgolas-ex7", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinex7.m3u8"},
-    {"name": "sports-trgolas-f1", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinf1.m3u8"},
-    {"name": "sports-trgolas-nbatv", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinnbatv.m3u8"},
-    {"name": "sports-trgolas-smarts", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinsmarts.m3u8"},
-    {"name": "sports-trgolas-ss", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinss.m3u8"},
-    {"name": "sports-trgolas-ss2", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinss2.m3u8"},
-    {"name": "sports-trgolas-t1", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayint1.m3u8"},
-    {"name": "sports-trgolas-t2", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayint2.m3u8"},
-    {"name": "sports-trgolas-t3", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayint3.m3u8"},
-    {"name": "sports-trgolas-t4", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayint4.m3u8"},
-    {"name": "sports-trgolas-trt1", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayintrt1.m3u8"},
-    {"name": "sports-trgolas-trtspor", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayintrtspor.m3u8"},
-    {"name": "sports-trgolas-trtspor2", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayintrtspor2.m3u8"},
-    {"name": "sports-trgolas-tv8", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayintv8.m3u8"},
-    {"name": "sports-trgolas-tv85", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayintv85.m3u8"},
-    {"name": "sports-trgolas-zirve", "url": "http://proxylendim101010.mywire.org/proxy.php?url=https://five.4928d54d950ee70q45.lat/yayinzirve.m3u8"},
-]
+# Trgoals domain kontrol
+base = "https://trgoals"
+domain = ""
 
-OUTPUT_DIR = "m3u_files"
+for i in range(1393, 2101):
+    test_domain = f"{base}{i}.xyz"
+    try:
+        response = requests.head(test_domain, timeout=3)
+        if response.status_code == 200:
+            domain = test_domain
+            break
+    except:
+        continue
 
-def sanitize_filename(name):
-    """Fayl adlarında problem yarada biləcək simvolları çıxarır"""
-    return "".join(c for c in name if c.isalnum() or c in "-_")
+if not domain:
+    print("Çalışır bir domain bulunamadı.")
+    exit()
 
-def create_m3u_files(channels):
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+# Kanallar ve isimleri
+channel_ids = {
+    "yayinzirve": "beIN Sports 1 ☪️",
+    "yayininat": "beIN Sports 1 ⭐",
+    "yayin1": "beIN Sports 1 ♾️",
+    "yayinb2": "beIN Sports 2",
+    "yayinb3": "beIN Sports 3",
+    "yayinb4": "beIN Sports 4",
+    "yayinb5": "beIN Sports 5",
+    "yayinbm1": "beIN Sports 1 Max",
+    "yayinbm2": "beIN Sports 2 Max",
+    "yayinss": "Saran Sports 1",
+    "yayinss2": "Saran Sports 2",
+    "yayint1": "Tivibu Sports 1",
+    "yayint2": "Tivibu Sports 2",
+    "yayint3": "Tivibu Sports 3",
+    "yayint4": "Tivibu Sports 4",
+    "yayinsmarts": "Smart Sports",
+    "yayinsms2": "Smart Sports 2",
+    "yayintrtspor": "TRT Spor",
+    "yayintrtspor2": "TRT Spor 2",
+    "yayinas": "A Spor",
+    "yayinatv": "ATV",
+    "yayintv8": "TV8",
+    "yayintv85": "TV8.5",
+    "yayinnbatv": "NBA TV",
+    "yayinex1": "Tâbii 1",
+    "yayinex2": "Tâbii 2",
+    "yayinex3": "Tâbii 3",
+    "yayinex4": "Tâbii 4",
+    "yayinex5": "Tâbii 5",
+    "yayinex6": "Tâbii 6",
+    "yayinex7": "Tâbii 7",
+    "yayinex8": "Tâbii 8"
+}
 
-    # Köhnə faylları sil
-    for file in os.listdir(OUTPUT_DIR):
-        if file.endswith(".m3u"):
-            os.remove(os.path.join(OUTPUT_DIR, file))
-
-    # Yeni faylları yarat
-    for channel in channels:
-        safe_name = sanitize_filename(channel["name"])
-        filename = os.path.join(OUTPUT_DIR, f"{safe_name}.m3u8")
-        content = f"""#EXTM3U
+# Çıkartmak istediğiniz örnek link ve ayar formatı:
+# Bu örneği kendi veri ve ihtiyacınıza göre düzenleyebilirsiniz.
+def generate_m3u_content(url):
+    return f"""#EXTM3U
 #EXT-X-VERSION:3
 #EXT-X-STREAM-INF:BANDWIDTH=5500000,AVERAGE-BANDWIDTH=8976000,RESOLUTION=1920x1080,CODECS="avc1.640028,mp4a.40.2",FRAME-RATE=25,SUBTITLES="subs"
-{channel['url']}
+{url}
 """
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(content)
-        print(f"{filename} yaradıldı ✅ ({channel['name']})")
 
-if __name__ == "__main__":
-    print(f"⏳ Script başladı: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    create_m3u_files(links)
-    print("✅ Bütün kanallar yeniləndi.\n")
+# Klasör oluştur
+folder_name = "channels_files"
+if not os.path.exists(folder_name):
+    os.makedirs(folder_name)
+
+# Her kanal için dosya oluşturuyoruz
+for channel_id, channel_name in channel_ids.items():
+    channel_url = f"{domain}/channel.html?id={channel_id}"
+    try:
+        r = requests.get(channel_url, headers={"User-Agent": "Mozilla/5.0"}, timeout=5)
+        match = re.search(r'const baseurl = "(.*?)"', r.text)
+        if match:
+            baseurl = match.group(1)
+            # Tek URL örneği, ihtiyaca göre liste veya farklı varyantlar eklenebilir
+            full_url = f"http://proxylendim101010.mywire.org/proxy.php?url={baseurl}{channel
