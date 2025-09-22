@@ -1,7 +1,7 @@
 import requests
 import re
 import os
-import shutil  # 👈 Bunu ekledik
+import shutil
 
 # Trgoals domain kontrol
 base = "https://trgoals"
@@ -58,16 +58,47 @@ channel_ids = {
     "yayinex8": "Tâbii 8"
 }
 
-# Klasörü tamamen sil ve yeniden oluştur
+# ========== KLÖRÜ TAMAMEN TEMİZLEME (GÜÇLÜ VERSİYON) ==========
 folder_name = "channels_files"
+
 if os.path.exists(folder_name):
-    shutil.rmtree(folder_name)  # 👈 TAMAMEN SİLER (dosyalar + alt klasörler)
-    print(f"🗑️  {folder_name} klasörü tamamen silindi.")
+    try:
+        shutil.rmtree(folder_name)
+        print(f"🗑️  {folder_name} klasörü başarıyla silindi.")
+    except Exception as e:
+        print(f"⚠️  Silme hatası: {e} — Tek tek dosyalar siliniyor...")
+        # Tek tek dosyaları sil
+        for root, dirs, files in os.walk(folder_name, topdown=False):
+            for file in files:
+                try:
+                    os.remove(os.path.join(root, file))
+                except Exception as ex:
+                    print(f"❌ Dosya silinemedi: {file} - {ex}")
+            for dir in dirs:
+                try:
+                    os.rmdir(os.path.join(root, dir))
+                except:
+                    pass
+        try:
+            os.rmdir(folder_name)
+            print(f"🗑️  {folder_name} elle silindi.")
+        except:
+            print(f"❌ {folder_name} hâlâ silinemedi — devam ediliyor...")
 
-os.makedirs(folder_name)  # 👈 HER ZAMAN YENİDEN OLUŞTUR
-print(f"📁 {folder_name} klasörü yeniden oluşturuldu.")
+# Klasörü yeniden oluştur
+try:
+    os.makedirs(folder_name, exist_ok=False)
+    print(f"📁 {folder_name} klasörü yeniden oluşturuldu.")
+except FileExistsError:
+    print(f"⚠️  {folder_name} hâlâ var — zorla siliniyor...")
+    shutil.rmtree(folder_name)
+    os.makedirs(folder_name)
+    print(f"✅ {folder_name} zorla yeniden oluşturuldu.")
+except Exception as e:
+    print(f"❌ Klasör oluşturulamadı: {e}")
+    exit(1)
 
-# Her kanal için ayrı .m3u8 dosyası oluştur
+# ========== KANAL DOSYALARI OLUŞTURMA ==========
 for channel_id, channel_name in channel_ids.items():
     channel_url = f"{domain}/channel.html?id={channel_id}"
     try:
@@ -77,14 +108,12 @@ for channel_id, channel_name in channel_ids.items():
             baseurl = match.group(1)
             full_url = f"http://proxylendim101010.mywire.org/proxy.php?url={baseurl}{channel_id}.m3u8"
 
-            # HLS Master Playlist formatı
             m3u_content = f"""#EXTM3U
 #EXT-X-VERSION:3
 #EXT-X-STREAM-INF:BANDWIDTH=5500000,AVERAGE-BANDWIDTH=8976000,RESOLUTION=1920x1080,CODECS="avc1.640028,mp4a.40.2",FRAME-RATE=25
 {full_url}
 """
 
-            # Dosya adını güvenli hale getir
             safe_filename = "".join(c if c.isalnum() or c in " ._-" else "_" for c in channel_name)
             file_path = os.path.join(folder_name, f"{safe_filename}.m3u8")
 
