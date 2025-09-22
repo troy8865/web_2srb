@@ -57,20 +57,10 @@ channel_ids = {
     "yayinex8": "Tâbii 8"
 }
 
-# M3U içeriği üretme fonksiyonu
-def generate_m3u_content(url):
-    return f"""#EXTM3U
-#EXT-X-VERSION:3
-#EXT-X-STREAM-INF:BANDWIDTH=5500000,AVERAGE-BANDWIDTH=8976000,RESOLUTION=1920x1080,CODECS="avc1.640028,mp4a.40.2",FRAME-RATE=25
-{url}
-"""
+# M3U başlığı
+m3u_master = "#EXTM3U\n"
 
-# Klasör oluştur
-folder_name = "channels_files"
-if not os.path.exists(folder_name):
-    os.makedirs(folder_name)
-
-# Her kanal için dosya oluşturuyoruz
+# Her kanal için URL çek ve master dosyaya ekle
 for channel_id, channel_name in channel_ids.items():
     channel_url = f"{domain}/channel.html?id={channel_id}"
     try:
@@ -78,20 +68,19 @@ for channel_id, channel_name in channel_ids.items():
         match = re.search(r'const baseurl = "(.*?)"', r.text)
         if match:
             baseurl = match.group(1)
-            # Tam URL'yi oluştur — channel_id eklenmeli
             full_url = f"http://proxylendim101010.mywire.org/proxy.php?url={baseurl}{channel_id}"
 
-            # M3U dosyasını oluştur
-            m3u_content = generate_m3u_content(full_url)
-            # Dosya adında özel karakterler olabilir, bunları temizleyelim
-            safe_filename = "".join(c if c.isalnum() or c in " ._-" else "_" for c in channel_name)
-            file_path = os.path.join(folder_name, f"{safe_filename}.m3u")
+            # Kanalı M3U'ya ekle
+            m3u_master += f'#EXTINF:-1,{channel_name}\n{full_url}\n'
 
-            with open(file_path, "w", encoding="utf-8") as f:
-                f.write(m3u_content)
-
-            print(f"✅ {channel_name} için M3U dosyası oluşturuldu: {file_path}")
+            print(f"✅ {channel_name} eklendi.")
         else:
             print(f"❌ {channel_name} için baseurl bulunamadı.")
     except Exception as e:
         print(f"⚠️ {channel_name} işlenirken hata: {e}")
+
+# Tek dosyaya yaz
+with open("goals.m3u", "w", encoding="utf-8") as f:
+    f.write(m3u_master)
+
+print("✅ goals.m3u başarıyla oluşturuldu!")
