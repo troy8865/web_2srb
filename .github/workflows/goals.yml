@@ -2,7 +2,7 @@ name: cixis fayli Links
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/30 * * * *'  # Her 90 dakikada bir (UTC)
   workflow_dispatch:
 
 jobs:
